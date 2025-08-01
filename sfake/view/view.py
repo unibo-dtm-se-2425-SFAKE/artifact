@@ -81,6 +81,7 @@ class MenuView:
                 self.showing_rules = False
         elif button_start.collidepoint(mouse_pos):
             print("Start Game")
+            #self.game.start_game() (da scommentare quando si gestisce il camvio schermata)
             pygame.quit()
             sys.exit()
 
