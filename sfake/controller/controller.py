@@ -26,3 +26,8 @@ class InputController:
                         self.view.button_quit,
                         self.view.button_rules
                     )
+            elif event.type == pygame.KEYDOWN and self.game.is_running: #TEST WORKING EVENT
+                if event.key == pygame.K_UP:
+                    pygame.quit()
+                    sys.exit()  # Exit the game
+                

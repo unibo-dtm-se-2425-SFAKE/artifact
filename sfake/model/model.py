@@ -27,7 +27,10 @@ class Game:
         pass
 
     def update(self):
-        # Function who update the game every tick
+        if self.is_running:
+            self.move_snake()
+            self.check_collisions()
+            self.check_bomb_time()
         pass
 
     def move_snake(self):

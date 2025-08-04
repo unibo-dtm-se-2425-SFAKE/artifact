@@ -33,6 +33,15 @@ class MenuView:
         )
 
     def render(self):
+
+        if not self.game.is_running:
+            self.draw_menu()
+        else:
+            self.screen.blit(self.background_image, (0, 0))
+            pygame.draw.rect(self.screen, (30, 30, 30), pygame.Rect(0, 0, 900, 60))
+        pygame.display.flip()
+
+    def draw_menu(self):
         self.screen.blit(self.background_image, (0, 0))
         self.draw_button(self.button_start, "Start", (0, 255, 0))
         self.draw_button(self.button_rules, "Rules", (0, 0, 255))
@@ -81,9 +90,7 @@ class MenuView:
                 self.showing_rules = False
         elif button_start.collidepoint(mouse_pos):
             print("Start Game")
-            #self.game.start_game() (da scommentare quando si gestisce il camvio schermata)
-            pygame.quit()
-            sys.exit()
+            self.game.start_game()
 
         elif button_rules.collidepoint(mouse_pos):
             print("Show Rules")

@@ -15,14 +15,15 @@ def main():
     menu_view = MenuView(game)
     controller = InputController(game, menu_view)
 
+    # Main loop
     running = True
     while running:
-        controller.handle_input()  #Handles user input
-        #game.update()  #Updates the game state
-        menu_view.render()  #Renders the current view
+        controller.handle_input()  # Handles user input
+        game.update()  # Updates the game state
+        menu_view.render()  # Renders the current view
         clock.tick(15)
 
-    pygame.quit()  # Chiude Pygame
+    pygame.quit()  # Closes Pygame
 
 
 if __name__ == "__main__":
