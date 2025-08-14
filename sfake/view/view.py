@@ -29,13 +29,11 @@ class MenuView:
         base_path = os.path.dirname(os.path.abspath(__file__))
         self.background_image = pygame.image.load(os.path.join(base_path, "..", "..", "assets", "background.jpg"))
 
-        #Apple
-        base_path = os.path.dirname(os.path.abspath(__file__))
         self.apple_image = pygame.image.load(os.path.join(base_path, "..", "..", "assets", "apple.png"))
-        
-        #Bomb
         self.apple_image = pygame.transform.scale(self.apple_image,(15, 15))
+
         self.bomb_image = pygame.image.load(os.path.join(base_path, "..", "..", "assets", "bomb.png"))
+        self.bomb_image = pygame.transform.scale(self.bomb_image,(15, 15))
 
     def render(self):
         self.screen.blit(self.background_image, (0, 0))
@@ -44,7 +42,8 @@ class MenuView:
         if not self.game.is_running:
             if self.game.is_game_over:
                 self.draw_game_over()
-            self.draw_menu()
+            else: 
+                self.draw_menu()
         else:
             self.draw_snake()
             self.draw_food()
@@ -112,22 +111,31 @@ class MenuView:
     def draw_game_over(self):
         over_text = self.font.render("You died!!", True, (255, 0, 0))
         score_text = self.font.render(f"Score: {self.game.score}", True, (255, 255, 255))
-        self.screen.blit(over_text, over_text.get_rect(center=(450, 350)))
-        self.screen.blit(score_text, score_text.get_rect(center=(450, 400)))
+        self.screen.blit(over_text, over_text.get_rect(center=(450, 250)))
+        self.screen.blit(score_text, score_text.get_rect(center=(450, 300)))
+
+        self.menu_button = pygame.Rect(450 - 100, 400, 200, 50)
+        pygame.draw.rect(self.screen, (30, 30, 30), self.menu_button)
+        menu_text = self.font.render("Menu", True, (255, 255, 255))
+        self.screen.blit(menu_text, menu_text.get_rect(center=self.menu_button.center))
 
     def handle_click(self, mouse_pos, button_start, button_quit, button_rules):
         if self.showing_rules:
             if self.ok_button.collidepoint(mouse_pos):
                 self.showing_rules = False
+
+        elif self.game.is_game_over:
+            if hasattr(self, 'menu_button') and self.menu_button.collidepoint(mouse_pos):
+                self.game.is_game_over = False
+                self.showing_rules = False
+                self.game.is_running = False
+
         elif button_start.collidepoint(mouse_pos):
-            print("Start Game")
             self.game.start_game()
 
         elif button_rules.collidepoint(mouse_pos):
-            print("Show Rules")
             self.showing_rules = True
 
         elif button_quit.collidepoint(mouse_pos):
-            print("Quit Game")
             pygame.quit()
             sys.exit()
