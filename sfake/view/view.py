@@ -4,41 +4,53 @@ import pygame
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 600
+BUTTON_WIDTH = 200
+BUTTON_HEIGHT = 50
 
 class MenuView:
-    button_width = 200
-    button_height = 50
-    center_x = SCREEN_WIDTH // 2 - button_width // 2
+    center_x = SCREEN_WIDTH // 2 - BUTTON_WIDTH // 2
     showing_rules = False
 
     def __init__(self, game):
         pygame.init()
         self.font = pygame.font.SysFont("Arial", 36)
-
+        
         self.showing_rules = False
-
         self.game = game
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, 600))
-        pygame.display.set_caption("Snake Game")
+        pygame.display.set_caption("Sfake Game")
 
         #Buttons
-        self.button_start = pygame.Rect(self.center_x, 150, self.button_width, self.button_height)
-        self.button_rules = pygame.Rect(self.center_x, 250, self.button_width, self.button_height)
-        self.button_quit = pygame.Rect(self.center_x, 350, self.button_width, self.button_height)
+        self.button_start = pygame.Rect(self.center_x, 150, BUTTON_WIDTH, BUTTON_HEIGHT)
+        self.button_rules = pygame.Rect(self.center_x, 250, BUTTON_WIDTH, BUTTON_HEIGHT)
+        self.button_quit = pygame.Rect(self.center_x, 350, BUTTON_WIDTH, BUTTON_HEIGHT)
 
         #Background
         base_path = os.path.dirname(os.path.abspath(__file__))
-        self.background_image = pygame.image.load(
-            os.path.join(base_path, "..", "..", "assets", "background.jpg")
-        )
+        self.background_image = pygame.image.load(os.path.join(base_path, "..", "..", "assets", "background.jpg"))
+
+        #Apple
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        self.apple_image = pygame.image.load(os.path.join(base_path, "..", "..", "assets", "apple.png"))
+        
+        #Bomb
+        self.apple_image = pygame.transform.scale(self.apple_image,(15, 15))
+        self.bomb_image = pygame.image.load(os.path.join(base_path, "..", "..", "assets", "bomb.png"))
 
     def render(self):
+        self.screen.blit(self.background_image, (0, 0))
+        pygame.draw.rect(self.screen, (30, 30, 30), pygame.Rect(0, 0, SCREEN_WIDTH, 60))
 
         if not self.game.is_running:
+            if self.game.is_game_over:
+                self.draw_game_over()
             self.draw_menu()
         else:
-            self.screen.blit(self.background_image, (0, 0))
-            pygame.draw.rect(self.screen, (30, 30, 30), pygame.Rect(0, 0, 900, 60))
+            self.draw_snake()
+            self.draw_food()
+            if self.game.bomb:
+                self.draw_bomb()
+            self.draw_score()
         pygame.display.flip()
 
     def draw_menu(self):
@@ -49,7 +61,6 @@ class MenuView:
 
         if self.showing_rules:
             self.draw_rules_popup()
-
         pygame.display.flip()
 
     def draw_button(self, rect, text, color):
@@ -77,12 +88,32 @@ class MenuView:
             txt = font.render(line, True, (255, 255, 255))
             self.screen.blit(txt, (popup_rect.x + 20, popup_rect.y + 30 + i * 30))
 
-        # Draw OK button
+        #Draw OK button
         self.ok_button = pygame.Rect(popup_rect.centerx - 40, popup_rect.bottom - 60, 80, 40)
         pygame.draw.rect(self.screen, (0, 200, 0), self.ok_button)
         ok_text = font.render("OK", True, (255, 255, 255))
         self.screen.blit(ok_text, ok_text.get_rect(center=self.ok_button.center))
 
+    def draw_snake(self):
+        for segment in self.game.snake:
+            pygame.draw.rect(self.screen, (0, 255, 0), pygame.Rect(segment[0], segment[1], 15, 15))
+
+    def draw_food(self):
+        self.screen.blit(self.apple_image, self.game.food)
+
+    def draw_bomb(self):
+        self.screen.blit(self.bomb_image, self.game.bomb)
+
+    def draw_score(self):
+        score_text = self.font.render(f"Score: {self.game.score}", True, (255, 255, 255))
+        text_rect = score_text.get_rect(center=(450, 25))
+        self.screen.blit(score_text, text_rect)
+    
+    def draw_game_over(self):
+        over_text = self.font.render("You died!!", True, (255, 0, 0))
+        score_text = self.font.render(f"Score: {self.game.score}", True, (255, 255, 255))
+        self.screen.blit(over_text, over_text.get_rect(center=(450, 350)))
+        self.screen.blit(score_text, score_text.get_rect(center=(450, 400)))
 
     def handle_click(self, mouse_pos, button_start, button_quit, button_rules):
         if self.showing_rules:

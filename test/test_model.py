@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import pygame
-from snake.controller.input_controller import InputController
+from sfake.controller.controller import InputController
 
 class TestInputController(unittest.TestCase):
 

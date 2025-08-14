@@ -14,7 +14,7 @@ class Game:
         self.food_counter = 0
 
     def start_game(self):
-        # Reset alla the parameters before restart a new game session
+        #Reset all the parameters before restart a new game session
         self.snake = [(225, 225), (210, 225), (195, 225)]
         self.food = self.generate_food()
         self.bomb = None
@@ -25,7 +25,7 @@ class Game:
         self.score = 0
         self.food_counter = 0
         
-    # new randomic position for the apple (ALIGNED WITH THE GRID!)
+    #New randomic position for the apple (ALIGNED WITH THE GRID!)
     def generate_food(self):
         while True:
             x = random.randint(0, (900 // 15) - 1) * 15
@@ -38,37 +38,36 @@ class Game:
             self.move_snake()
             self.check_collisions()
             self.check_bomb_time()
-        pass
 
-    # manage the position of the snake 
+    #Manage the position of the snake 
     def move_snake(self):
-        # position of the head
+        #Position of the head
         new_head = (self.snake[0][0] + self.direction[0], self.snake[0][1] + self.direction[1])
-        # add the new head and remove the last part of the body
+        #Add the new head and remove the last part of the body
         self.snake = [new_head] + self.snake
 
         if new_head == self.food:
-            # if the snake eats the apple
+            #If the snake eats the apple
             self.score += 1
             self.food_counter += 1
             self.food = self.generate_food()
-            # Ogni 3/4 apples a new bomb is printed
+            #Every 3/4 apples a new bomb is printed
             if self.food_counter % random.randint(3, 4) == 0 and not self.bomb:
                 self.spawn_bomb()
         elif self.bomb and new_head == self.bomb:
-            # if the snake hits the bomb: game over
+            #If the snake hits the bomb: game over
             self.is_running = False
             self.is_game_over = True
         else:
-            # otherwise remove the queue (movement)
+            #Otherwise remove the queue (movement)
             self.snake.pop()
 
     def change_direction(self, dx, dy):
-        # manage the change direction (NB: cannot change direction of 180 degrees!!)
+        #Manage the change direction (NB: cannot change direction of 180 degrees!!)
         if (dx, dy) != (-self.direction[0], -self.direction[1]):
             self.direction = (dx, dy)
 
-    # manage the collisions with the pitch or with himself
+    #Manage the collisions with the pitch or with himself
     def check_collisions(self):
         head = self.snake[0]
         if (
@@ -80,15 +79,23 @@ class Game:
             self.is_game_over = True
 
     def check_bomb_time(self):
-        # delete the bomb after 10 seconds
+        #Delete the bomb after 10 seconds
         if self.bomb and time.time() - self.bomb_time >= 10:
             self.bomb = None
 
     def spawn_bomb(self):
-        # position of the bomb (free but not over the snake)
+        #Position of the bomb (free but not over the snake)
         while True:
             bomb_pos = self.generate_food()
             if bomb_pos != self.food and bomb_pos not in self.snake:
                 self.bomb = bomb_pos
                 self.bomb_time = time.time()
                 break
+
+    def generate_food(self):
+        #Generate a new position for the food (aligned with the grid)
+        while True:
+            x = random.randint(0, (900 // 15) - 1) * 15
+            y = random.randint(60 // 15, (600 // 15) - 1) * 15
+            if (x, y) not in self.snake:
+                return (x, y)

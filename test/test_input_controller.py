@@ -1,5 +1,5 @@
 import unittest
-from snake.model.game import Game
+from sfake.model.model import Game
 
 class TestModel(unittest.TestCase):
 

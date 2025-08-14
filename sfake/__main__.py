@@ -9,8 +9,8 @@ from sfake.view.view import MenuView
 # this is the script to be executed whenever some users writes `python -m sfake` on the command line, eg.
 def main():
     pygame.init()
-
     clock = pygame.time.Clock()
+
     game = Game()
     menu_view = MenuView(game)
     controller = InputController(game, menu_view)
