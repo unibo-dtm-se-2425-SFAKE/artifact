@@ -1,51 +1,60 @@
 import unittest
-from sfake.model.model import Game
+from unittest.mock import MagicMock, patch
+import pygame
+from sfake.controller.controller import InputController
 
-class TestModel(unittest.TestCase):
-
+class TestInputController(unittest.TestCase):
     def setUp(self):
-        # Setup iniziale con l'istanza di Game
-        pass
+        self.game = MagicMock()
+        self.view = MagicMock()
+        self.controller = InputController(self.game, self.view)
 
-    def test_food_on_grid(self):
-        # TODO: Verifica che il cibo generato sia in linea con la griglia 15x15
-        pass
+    @patch('pygame.event.get')
+    def test_handle_input_quit_event(self, mock_event_get):
+        mock_event_get.return_value = [pygame.event.Event(pygame.QUIT)]
+        with patch('pygame.quit') as mock_quit, patch('sys.exit') as mock_exit:
+            self.controller.handle_input()
+            mock_quit.assert_called_once()
+            mock_exit.assert_called_once()
 
-    def test_food_within_bounds(self):
-        # TODO: Verifica che il cibo venga generato dentro il  campo di gioco
-        pass
+    @patch('pygame.event.get')
+    def test_handle_input_mouse_button_down(self, mock_event_get):
+        self.game.is_running = False
+        mock_event_get.return_value = [pygame.event.Event(pygame.MOUSEBUTTONDOWN, {'pos': (100, 100)})]
+        self.controller.handle_input()
+        self.view.handle_buttons_click.assert_called_once()
 
-    def test_food_on_snake(self):
-        # TODO: Verifica che il cibo non venga generato sopra il serpente
-        pass
+    @patch('pygame.event.get')
+    def test_handle_input_keydown_up(self, mock_event_get):
+        self.game.is_running = True
+        self.game.direction = (0, 0)
+        mock_event_get.return_value = [pygame.event.Event(pygame.KEYDOWN, {'key': pygame.K_UP})]
+        self.controller.handle_input()
+        self.game.change_direction.assert_called_with(0, -15)
 
-    def test_move(self):
-        # TODO: Verifica che il serpente si muova correttamente in avanti
-        pass
+    @patch('pygame.event.get')
+    def test_handle_input_keydown_down(self, mock_event_get):
+        self.game.is_running = True
+        self.game.direction = (0, 0)
+        mock_event_get.return_value = [pygame.event.Event(pygame.KEYDOWN, {'key': pygame.K_DOWN})]
+        self.controller.handle_input()
+        self.game.change_direction.assert_called_with(0, 15)
 
-    def test_snake_collision_self(self):
-        # TODO: Simula una situazione in cui il serpente mangia se stesso
-        pass
+    @patch('pygame.event.get')
+    def test_handle_input_keydown_left(self, mock_event_get):
+        self.game.is_running = True
+        self.game.direction = (0, 0)
+        mock_event_get.return_value = [pygame.event.Event(pygame.KEYDOWN, {'key': pygame.K_LEFT})]
+        self.controller.handle_input()
+        self.game.change_direction.assert_called_with(-15, 0)
 
-    def test_collision_wall(self):
-        # TODO: Simula una situazione in cui il serpente si schianta con il bordo
-        pass
-
-    def test_food_collision(self):
-        # TODO: Verifica che il punteggio aumenti correttamente quando il serpente mangia la mela
-        pass
-
-    def test_game_reset(self):
-        # TODO: Verifica che il reset del gioco riporti tutti i parametri allo stato iniziale
-        pass
-
-    def test_change_directions(self):
-        # TODO: Verifica il corretto cambio di direzione (evitando esempio che da destra vada a sinistra)
-        pass
-
-    def test_update(self):
-        # TODO: Verifica che la funzione update modifichi la posizione del serpente
-        pass
+    @patch('pygame.event.get')
+    def test_handle_input_keydown_right(self, mock_event_get):
+        self.game.is_running = True
+        self.game.direction = (0, 0)
+        mock_event_get.return_value = [pygame.event.Event(pygame.KEYDOWN, {'key': pygame.K_RIGHT})]
+        self.controller.handle_input()
+        self.game.change_direction.assert_called_with(15, 0)
 
 if __name__ == '__main__':
     unittest.main()
