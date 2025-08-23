@@ -17,12 +17,13 @@ class TestInputController(unittest.TestCase):
             mock_quit.assert_called_once()
             mock_exit.assert_called_once()
 
+    #TODO
     @patch('pygame.event.get')
     def test_handle_input_mouse_button_down(self, mock_event_get):
         self.game.is_running = False
         mock_event_get.return_value = [pygame.event.Event(pygame.MOUSEBUTTONDOWN, {'pos': (100, 100)})]
         self.controller.handle_input()
-        self.view.handle_buttons_click.assert_called_once()
+        self.view.handle_click.assert_called_once()
 
     @patch('pygame.event.get')
     def test_handle_input_keydown_up(self, mock_event_get):

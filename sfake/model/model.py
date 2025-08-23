@@ -24,14 +24,6 @@ class Game:
         self.is_game_over = False
         self.score = 0
         self.food_counter = 0
-        
-    #New randomic position for the apple (ALIGNED WITH THE GRID!)
-    def generate_food(self):
-        while True:
-            x = random.randint(0, (900 // 15) - 1) * 15
-            y = random.randint(60 // 15, (600 // 15) - 1) * 15
-            if (x, y) not in self.snake:
-                return (x, y)
 
     def update(self):
         if self.is_running:
@@ -91,9 +83,9 @@ class Game:
                 self.bomb = bomb_pos
                 self.bomb_time = time.time()
                 break
-
+        
+    #New randomic position for the apple (ALIGNED WITH THE GRID!)
     def generate_food(self):
-        #Generate a new position for the food (aligned with the grid)
         while True:
             x = random.randint(0, (900 // 15) - 1) * 15
             y = random.randint(60 // 15, (600 // 15) - 1) * 15
