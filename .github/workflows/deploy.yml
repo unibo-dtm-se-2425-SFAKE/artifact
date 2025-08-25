@@ -1,18 +1,20 @@
 name: deploy
+
 on:
   workflow_call:
   workflow_dispatch:
+
 jobs:
   release:
     concurrency:
-      # Only one release job at a time. Strictly sequential.
       group: deploy
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # all history
+          fetch-depth: 0 # fetch all history for semantic-release
 
       - name: Get All Tags
         run: git fetch --tags -f
@@ -47,5 +49,7 @@ jobs:
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          # Usa il tuo secret personale o quello predefinito
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }} # oppure secrets.GITHUB_TOKEN
           RELEASE_DRY_RUN: ${{ contains(github.repository, 'template') }}
+
