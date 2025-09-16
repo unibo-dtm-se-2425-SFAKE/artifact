@@ -9,7 +9,12 @@ jobs:
     concurrency:
       group: deploy
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write         # Required for pushing tags
+      pull-requests: write    # Required for creating/updating PRs
+      issues: write           # Required for creating issues
+      actions: read           # Required for workflow operations
+      checks: write           # Required for status checks
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
